@@ -628,7 +628,7 @@ function FS22_EnhancedVehicle:onPostLoad(savegame)
   self.vData.opMode = 0
   self.vData.triggerCalculate = false
   self.vData.impl  = { isCalculated = false }
-  self.vData.track = { isCalculated = false, deltaTrack = 1, headlandMode = 1, headlandDistance = 9999, isOnField = 0, eofDistance = -1, eofNext = 0 }
+  self.vData.track = { isCalculated = false, deltaTrack = 1, headlandMode = 1, headlandRearFrontUp = 1, headlandRearFrontOff = 1, headlandDistance = 9999, isOnField = 0, eofDistance = -1, eofNext = 0 }
 
   -- (server) set some defaults
   if self.isServer then
@@ -847,6 +847,62 @@ function FS22_EnhancedVehicle:onUpdate(dt)
                   self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_OFF)
                 end
               end
+              -- handle attachments
+              if self.vData.track.headlandMode >= 2 then
+                FS22_EnhancedVehicle:enumerateAttachments(self)
+                -- FRONT
+                if self.vData.track.headlandRearFrontUp >= 3 then
+                  -- front hydraulic up/down
+                  -- first the joints itsself
+                  for _, _v in pairs(joints_front) do
+                    _v[1].spec_attacherJoints.setJointMoveDown(_v[1], _v[2], false)
+                    if debug > 1 then print("--> front up/down: ".._v[1].rootNode.."/".._v[2].."/"..tostring(false) ) end
+                  end
+                  -- then the attached devices
+                  for _, object in pairs(implements_front) do
+                    if object.spec_attachable ~= nil then
+                      object.spec_attachable.setLoweredAll(object, false)
+                      if debug > 1 then print("--> front up/down: "..object.rootNode.."/"..tostring(false) ) end
+                    end
+                  end
+                end
+                if self.vData.track.headlandRearFrontOff >= 3 then
+                  for _, object in pairs(implements_front) do
+                    -- new onoff status
+                    if object.spec_turnOnVehicle ~= nil then
+                      if object.spec_turnOnVehicle.isTurnedOn then
+                        object.spec_turnOnVehicle.setIsTurnedOn(object, false)
+                      end
+                    end
+                  end
+                end
+                -- REAR
+                if self.vData.track.headlandRearFrontUp == 2 or self.vData.track.headlandRearFrontUp == 4 then
+                  -- rear hydraulic up/down
+                  -- first the joints itsself
+                  for _, _v in pairs(joints_back) do
+                    _v[1].spec_attacherJoints.setJointMoveDown(_v[1], _v[2], false)
+                    if debug > 1 then print("--> rear up/down: ".._v[1].rootNode.."/".._v[2].."/"..tostring(false) ) end
+                  end
+                  -- then the attached devices
+                  for _, object in pairs(implements_back) do
+                    if object.spec_attachable ~= nil then
+                      object.spec_attachable.setLoweredAll(object, false)
+                      if debug > 1 then print("--> rear up/down: "..object.rootNode.."/"..tostring(false) ) end
+                    end
+                  end
+                end
+                if self.vData.track.headlandRearFrontOff == 2 or self.vData.track.headlandRearFrontOff == 4 then
+                  for _, object in pairs(implements_back) do
+                    -- new onoff status
+                    if object.spec_turnOnVehicle ~= nil then
+                      if object.spec_turnOnVehicle.isTurnedOn then
+                        object.spec_turnOnVehicle.setIsTurnedOn(object, false)
+                      end
+                    end
+                  end
+                end
+              end  
             end
           end
         end -- <- end headland

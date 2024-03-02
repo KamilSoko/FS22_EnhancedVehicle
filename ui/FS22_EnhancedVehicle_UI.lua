@@ -69,6 +69,12 @@ FS22_EnhancedVehicle_UI.CONTROLS = {
   "headlandSoundTriggerDistanceSetting",
   "headlandSoundTriggerDistanceTitle",
   "headlandSoundTriggerDistanceTT",
+  "headlandRearFrontUpSetting",
+  "headlandRearFrontUpTitle",
+  "headlandRearFrontUpTT",
+  "headlandRearFrontOffSetting",
+  "headlandRearFrontOffTitle",
+  "headlandRearFrontOffTT",
 }
 
 local EV_elements_global = { 'snap', 'diff', 'hydraulic', 'parkingBrake' }
@@ -214,7 +220,17 @@ function FS22_EnhancedVehicle_UI:onOpen()
   -- headland sound trigger distance
   self.headlandSoundTriggerDistanceTitle:setText(g_i18n.modEnvironments[modName]:getText("ui_FS22_EnhancedVehicle_headlandSoundTriggerDistanceTitle"))
   self.headlandSoundTriggerDistanceTT:setText(g_i18n.modEnvironments[modName]:getText("ui_FS22_EnhancedVehicle_headlandSoundTriggerDistanceTT"))
+
   self.headlandSoundTriggerDistanceSetting:setTexts({ "5", "10", "15", "20" })
+  --headland rear/front up
+  self.headlandRearFrontUpTitle:setText("Rear/Front attachemnt up at headland")
+  self.headlandRearFrontUpTT:setText("Only applicable when headland mode is active")
+  self.headlandRearFrontUpSetting:setTexts({ "none", "rear", "front", "rear+front" })
+
+  --headland rear/front off
+  self.headlandRearFrontOffTitle:setText("Rear/Front attachemnt off at headland")
+  self.headlandRearFrontOffTT:setText("Only applicable when headland mode is active")
+  self.headlandRearFrontOffSetting:setTexts({ "none", "rear", "front", "rear+front" })
 
   -- HUD elements
   for _, v in pairs(EV_elements_HUD) do
@@ -284,6 +300,12 @@ function FS22_EnhancedVehicle_UI:updateValues()
 
   -- headland mode
   self.headlandModeSetting:setState(self.vehicle.vData.track.headlandMode)
+
+  -- headland rear/front up
+  self.headlandRearFrontUpSetting:setState(self.vehicle.vData.track.headlandRearFrontUp)
+
+  -- headland rear/front off
+  self.headlandRearFrontOffSetting:setState(self.vehicle.vData.track.headlandRearFrontOff)
 
   -- headland distance
   local _state = 0
@@ -367,6 +389,12 @@ function FS22_EnhancedVehicle_UI:onClickOk()
   -- headland mode
   self.vehicle.vData.track.headlandMode = self.headlandModeSetting:getState()
 
+  -- headland rear/front up
+  self.vehicle.vData.track.headlandRearFrontUp = self.headlandRearFrontUpSetting:getState()
+
+  -- headland rear/front off
+  self.vehicle.vData.track.headlandRearFrontOff = self.headlandRearFrontOffSetting:getState()
+  
   -- headland distance
   local _state = self.headlandDistanceSetting:getState()
   self.vehicle.vData.track.headlandDistance = 0
