@@ -196,7 +196,8 @@ function FS22_EnhancedVehicle_UI:onOpen()
   self.headlandModeSetting:setTexts({
       g_i18n.modEnvironments[modName]:getText("ui_FS22_EnhancedVehicle_headlandModeOption1"),
       g_i18n.modEnvironments[modName]:getText("ui_FS22_EnhancedVehicle_headlandModeOption2"),
-      g_i18n.modEnvironments[modName]:getText("ui_FS22_EnhancedVehicle_headlandModeOption3")
+      g_i18n.modEnvironments[modName]:getText("ui_FS22_EnhancedVehicle_headlandModeOption3"),
+      "Only attachments"
     })
 
   -- headland distance
@@ -394,7 +395,7 @@ function FS22_EnhancedVehicle_UI:onClickOk()
 
   -- headland rear/front off
   self.vehicle.vData.track.headlandRearFrontOff = self.headlandRearFrontOffSetting:getState()
-  
+
   -- headland distance
   local _state = self.headlandDistanceSetting:getState()
   self.vehicle.vData.track.headlandDistance = 0
